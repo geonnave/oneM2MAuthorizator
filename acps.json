@@ -1,0 +1,52 @@
+[
+    {
+        "name": "admin_acp",
+        "rules": [
+            {
+                "origs": [
+                    "root",
+                    "admin"
+                ],
+                "ops": 63
+            }
+        ],
+        "self_rules": {}
+    },
+    {
+        "name": "port_acp",
+        "privileges": [
+            {
+                "origs": [
+                    "c3po"
+                ],
+                "ops": 4,
+                "ctxs": [
+                    {
+                        "time_window": [
+                            "* * 6-22 * * *"
+                        ]
+                    }
+                ]
+            },
+            {
+                "origs": [
+                    "c3po"
+                ],
+                "ops": 2
+            }
+        ],
+        "self_rules": {}
+    },
+    {
+        "name": "television_acp",
+        "privileges": [
+            {
+                "origs": [
+                    "c3po"
+                ],
+                "ops": 6
+            }
+        ],
+        "self_rules": {}
+    }
+]

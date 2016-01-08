@@ -4,7 +4,7 @@ defmodule OneM2MAuthorizator.Mixfile do
   def project do
     [app: :oneM2M_authorizator,
      version: "0.0.1",
-     elixir: "~> 1.2-dev",
+     elixir: "~> 1.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -28,6 +28,8 @@ defmodule OneM2MAuthorizator.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:poison, "~> 1.5"}
+    ]
   end
 end
