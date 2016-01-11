@@ -1,6 +1,6 @@
 [
     {
-        "name": "admin_acp",
+        "policy_id": "admin_acp",
         "rules": [
             {
                 "origs": [
@@ -13,8 +13,8 @@
         "self_rules": {}
     },
     {
-        "name": "port_acp",
-        "privileges": [
+        "policy_id": "port_acp",
+        "rules": [
             {
                 "origs": [
                     "c3po"
@@ -38,8 +38,8 @@
         "self_rules": {}
     },
     {
-        "name": "television_acp",
-        "privileges": [
+        "policy_id": "television_acp",
+        "rules": [
             {
                 "origs": [
                     "c3po"
