@@ -2,6 +2,7 @@ defmodule PRPTest do
   use ExUnit.Case
 
   alias OneM2MAuthorizator.Model.Request
+  alias OneM2MAuthorizator.Model.AccessControlPolicy
 
   @sample_rule "{\"origs\": [\"root\",\"admin\"],\"ops\": 63}"
   @array_rule "[{\"origs\": [\"root\",\"admin\"],\"ops\": 63},{\"origs\": [\"c3po\"],\"ops\": 6}]"
@@ -21,7 +22,7 @@ defmodule PRPTest do
   end
 
   test "shall get appropriate acp, given a request" do
-    acp = OneM2MAuthorizator.PRP.get_applicable_acp @req
+    acp = %AccessControlPolicy{rules: [first | rest]} = OneM2MAuthorizator.PRP.get_applicable_acp @req
     assert Enum.count(acp.rules) == 2
   end
 
