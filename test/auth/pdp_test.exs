@@ -12,7 +12,7 @@ defmodule PDPTest do
   @req %Request{acp_ids: ["admin_acp", "port_acp"],
                  to: "smartbulb",
                  from: "c3po",
-                 op: 4}
+                 op: 2}
   @self_req %Request{acp_ids: ["admin_acp"],
                   to: "authorizator",
                   from: "c3po",
@@ -25,6 +25,11 @@ defmodule PDPTest do
   test "can check originator" do
     acr = %AccessControlRule{origs: ["c3po"]}
     assert PDP.match_origs acr, @req
+  end
+
+  test "can check operations" do
+    assert PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 2})
+    refute PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 6})
   end
 
 end

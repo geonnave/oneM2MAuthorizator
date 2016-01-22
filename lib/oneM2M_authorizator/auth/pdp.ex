@@ -4,6 +4,8 @@ defmodule OneM2MAuthorizator.PDP do
   alias OneM2MAuthorizator.Model.AccessControlRule
   alias OneM2MAuthorizator.Model.AccessControlPolicy
 
+  use Bitwise
+
   def authorize(request) do
     acp_rules = PRP.get_applicable_acp request
 
@@ -20,11 +22,26 @@ defmodule OneM2MAuthorizator.PDP do
     Enum.member? acr_froms, req_from
   end
 
-  def match_ops(acr_ops, req_ops) when is_list(acr_ops) and is_list(req_ops) do
-    true
+  def match_ops(%{ops: acr_ops}, %Request{op: req_ops}) do
+    do_match_ops(acr_ops, req_ops, 3) == 1
   end
-  def match_ops(acr_ops, req_ops) when not is_list(acr_ops), do: match_ops(Integer.digits(acr_ops, 2), req_ops)
-  def match_ops(acr_ops, req_ops) when not is_list(req_ops), do: match_ops(acr_ops, Integer.digits(req_ops, 2))
+
+  defp do_match_ops(acr_ops, req_ops, 0), do: match_op_bit(acr_ops, req_ops, 0)
+  defp do_match_ops(acr_ops, req_ops, offset) do
+    case match_op_bit(acr_ops, req_ops, offset) do
+      1 -> do_match_ops(acr_ops, req_ops, offset-1)
+      0 -> 0
+    end
+  end
+
+  defp match_op_bit(acr_op, req_op, offset) do
+    match_op_bit(acr_op >>> offset, req_op >>> offset)
+  end
+  defp match_op_bit(acr_op, req_op) do
+    bor(rem(acr_op, 2), bnot_integer(rem(req_op, 2)))
+  end
+
+  defp bnot_integer(x), do: if x == 0, do: 1, else: 0
 
   def match_ctxs(%{ctxs: acr_ctxs}, req_ctxs) do
     # logic for check contexts
