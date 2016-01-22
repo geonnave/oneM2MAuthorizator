@@ -21,20 +21,13 @@ defmodule PRPTest do
     assert file != ""
   end
 
+  test "shall read acps" do
+    acps = OneM2MAuthorizator.PRP.read_acps
+  end
+
   test "shall get appropriate acp, given a request" do
-    acp = %AccessControlPolicy{rules: [first | rest]} = OneM2MAuthorizator.PRP.get_applicable_acp @req
-    assert Enum.count(acp.rules) == 2
-  end
-
-  test "shall convert a acr map to keyword list" do
-    res = OneM2MAuthorizator.PRP.acr_map_to_kw(Poison.decode! @sample_rule)
-    assert res[:ops] == 63
-    assert is_list(res[:origs])
-  end
-
-  test "shall convert json-encoded acrs to AccessControlRule structs" do
-    res = OneM2MAuthorizator.PRP.parse_acrs(Poison.decode! @array_rule)
-    assert %OneM2MAuthorizator.Model.AccessControlRule{} = Enum.at(res, 0)
+    acp_rules = OneM2MAuthorizator.PRP.get_applicable_acp @req
+    assert Enum.count(acp_rules) == 2
   end
 
 end

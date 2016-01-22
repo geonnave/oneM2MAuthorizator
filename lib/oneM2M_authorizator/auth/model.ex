@@ -7,7 +7,7 @@ defmodule OneM2MAuthorizator.Model.AccessControlPolicy do
   defstruct policy_id: "", rules: [AccessControlRule], self_rules: [AccessControlRule]
 end
 defmodule OneM2MAuthorizator.Model.AccessControlRule do
-  defstruct origs: [], ops: 0, ctxs: [OneM2MAuthorizator.Model.AccessControlContext]
+  defstruct origs: [], ops: 0, ctxs: nil 
 end
 defmodule OneM2MAuthorizator.Model.AccessControlContext do
   defstruct time_window: [], location: nil, ip_addr: nil
