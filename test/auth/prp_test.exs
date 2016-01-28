@@ -2,7 +2,6 @@ defmodule PRPTest do
   use ExUnit.Case
 
   alias OneM2MAuthorizator.Model.Request
-  alias OneM2MAuthorizator.Model.AccessControlPolicy
 
   @sample_rule "{\"origs\": [\"root\",\"admin\"],\"ops\": 63}"
   @array_rule "[{\"origs\": [\"root\",\"admin\"],\"ops\": 63},{\"origs\": [\"c3po\"],\"ops\": 6}]"
@@ -22,7 +21,7 @@ defmodule PRPTest do
   end
 
   test "shall read acps" do
-    acps = OneM2MAuthorizator.PRP.read_acps
+    _acps = OneM2MAuthorizator.PRP.read_acps
   end
 
   test "shall get appropriate acp, given a request" do

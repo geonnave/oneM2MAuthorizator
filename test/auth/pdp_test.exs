@@ -3,7 +3,6 @@ defmodule PDPTest do
 
   alias OneM2MAuthorizator.PDP
   alias OneM2MAuthorizator.Model.Request
-  alias OneM2MAuthorizator.Model.AccessControlPolicy
   alias OneM2MAuthorizator.Model.AccessControlRule
 
   @sample_rule "{\"origs\": [\"root\",\"admin\"],\"ops\": 63}"
@@ -28,8 +27,19 @@ defmodule PDPTest do
   end
 
   test "can check operations" do
-    assert PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 2})
+    refute PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 1})
+    assert PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 2})
+    refute PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 3})
+    refute PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 4})
+    refute PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 5})
     refute PDP.match_ops(%AccessControlRule{ops: 2}, %Request{op: 6})
+
+    refute PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 1})
+    assert PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 2})
+    refute PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 3})
+    assert PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 4})
+    refute PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 5})
+    assert PDP.match_ops(%AccessControlRule{ops: 6}, %Request{op: 6})
   end
 
 end
