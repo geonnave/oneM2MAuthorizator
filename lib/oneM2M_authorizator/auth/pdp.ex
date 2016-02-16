@@ -1,9 +1,9 @@
 defmodule OneM2MAuthorizator.PDP do
+  use Bitwise
+
   alias OneM2MAuthorizator.PRP
   alias OneM2MAuthorizator.PIP
   alias OneM2MAuthorizator.Model.Request
-
-  use Bitwise
 
   @max_operations_number 5
 
@@ -48,10 +48,13 @@ defmodule OneM2MAuthorizator.PDP do
   def match_ctxs(%{ctxs: nil}, _req_ctxs), do: true
   def match_ctxs(%{ctxs: []}, _req_ctxs), do: true
   def match_ctxs(%{ctxs: acr_ctxs}, req_ctxs) do
-    # logic for check contexts
-    true
+    # TODO: check Ip Address and Location context information
+    match_ctxs_time_window(acr_ctxs.time_window, req_ctxs.time)
   end
 
+  def match_ctxs_time_window(time_windows, req_time) when is_list(time_windows) do
+    Enum.reduce(true, fn(tw, acc) -> acc && match_ctxs_time_window(tw, req_time) end)
+  end
   def match_ctxs_time_window(time_window, req_time) do
     if Regex.match?(~r/[0-6]([,-][0-6])*/, time_window) do
       true # TODO: implement match_week_day
@@ -60,13 +63,45 @@ defmodule OneM2MAuthorizator.PDP do
     end
   end
 
-  def match_detailed_time(time_window, req_time) do
-    match_detailed_time(String.split(time_window, ~r/\s+/), String.split(time_window, ~r/\s+/))
+  def match_detailed_time(time_window, req_time)
+      when not is_list(time_window) and not is_list(req_time) do
+    match_detailed_time(String.split(time_window, ~r/\s+/), String.split(req_time, ~r/\s+/))
   end
-  def match_detailed_time(time_window, req_time) when is_list(time_window) and is_list(req_time) do
+  def match_detailed_time(time_window, req_time) do
     [time_window, req_time]
     |> List.zip
-    #|> Enum.reduce(false, fn({tw_unit, rt_unit}, acc) -> acc || match_unit_of_time(tw_unit, rt_unit))
+    |> match_ranges
+  end
+  def match_ranges([]), do: true
+  def match_ranges([{range, value} | tail]) do
+    if in_range?(range, value) do
+      match_ranges(tail)
+    else
+      false
+    end
+  end
+
+  @doc """
+  Check if a number is in a given range.
+
+  The input numbers come as strings.
+  Pattern match decompose them into its binary values so
+  that they can be easily compared.
+
+  ## Examples
+
+      iex> in_range? "6-22", "7"
+      true
+      iex> in_range? "*", "7"
+      true
+      iex> in_range? "1-5", "10"
+      false
+  """
+  def in_range?("*", _value), do: true
+  def in_range?(range, value) do
+    [min, max] = String.split(range, "-") |> Enum.map(&String.to_integer/1)
+    value = String.to_integer(value)
+    min <= value && value <= max
   end
 
 end

@@ -1,8 +1,6 @@
 defmodule OneM2MAuthorizator.PRP do
   alias OneM2MAuthorizator.Model.Request
   alias OneM2MAuthorizator.Model.AccessControlPolicy
-  alias OneM2MAuthorizator.Model.AccessControlRule
-  alias OneM2MAuthorizator.Model.AccessControlContext
 
   @acps_file "acps.json"
 
