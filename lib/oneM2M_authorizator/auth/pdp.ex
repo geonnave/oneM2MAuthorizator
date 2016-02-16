@@ -16,7 +16,7 @@ defmodule OneM2MAuthorizator.PDP do
   end
 
   def match(rule, %Request{} = request) do
-    match_origs(rule, request) && match_ops(rule, request) && match_ctxs(rule, nil)
+    match_origs(rule, request) && match_ops(rule, request) && match_ctxs(rule, PIP.fetch_context(request))
   end
 
   def match_origs(%{origs: acr_froms}, %Request{from: req_from}) do
@@ -45,10 +45,28 @@ defmodule OneM2MAuthorizator.PDP do
 
   defp bnot_integer(x), do: if x == 0, do: 1, else: 0
 
+  def match_ctxs(%{ctxs: nil}, _req_ctxs), do: true
+  def match_ctxs(%{ctxs: []}, _req_ctxs), do: true
   def match_ctxs(%{ctxs: acr_ctxs}, req_ctxs) do
-    IO.inspect req_ctxs
     # logic for check contexts
     true
+  end
+
+  def match_ctxs_time_window(time_window, req_time) do
+    if Regex.match?(~r/[0-6]([,-][0-6])*/, time_window) do
+      true # TODO: implement match_week_day
+    else
+      match_detailed_time(time_window, req_time)
+    end
+  end
+
+  def match_detailed_time(time_window, req_time) do
+    match_detailed_time(String.split(time_window, ~r/\s+/), String.split(time_window, ~r/\s+/))
+  end
+  def match_detailed_time(time_window, req_time) when is_list(time_window) and is_list(req_time) do
+    [time_window, req_time]
+    |> List.zip
+    #|> Enum.reduce(false, fn({tw_unit, rt_unit}, acc) -> acc || match_unit_of_time(tw_unit, rt_unit))
   end
 
 end
