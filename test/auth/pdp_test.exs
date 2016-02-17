@@ -71,4 +71,14 @@ defmodule PDPTest do
     assert PDP.match_ctxs_time_window "* * 6-22 * * *", "0 0 22 11 10 2015"
   end
 
+  test "match context function" do
+    ctx = %{ctxs: [
+               %{
+                 time_window: ["* * 6-22 * * *"]
+               }
+             ]}
+    time = %{time: "0 0 7 0 0 0"}
+    assert PDP.match_ctxs ctx, time
+  end
+
 end

@@ -49,19 +49,28 @@ defmodule OneM2MAuthorizator.PDP do
   def match_ctxs(%{ctxs: []}, _req_ctxs), do: true
   def match_ctxs(%{ctxs: acr_ctxs}, req_ctxs) do
     # TODO: check Ip Address and Location context information
-    match_ctxs_time_window(acr_ctxs.time_window, req_ctxs.time)
+    # match_ctxs_ip_address &&
+    # match_ctxs_location &&
+    match_ctxs_time_window(acr_ctxs, req_ctxs)
   end
 
+  def match_ctxs_time_window(%{ctxs: acr_ctxs}, req_ctxs) do
+    Enum.map(acr_ctxs, fn(ctx) -> ctx[:time_window] end)
+    |> List.flatten
+    |> match_ctxs_time_window(req_ctxs.time)
+  end
   def match_ctxs_time_window(time_windows, req_time) when is_list(time_windows) do
-    Enum.reduce(true, fn(tw, acc) -> acc && match_ctxs_time_window(tw, req_time) end)
+    Enum.reduce(time_windows, true, fn(tw, acc) -> acc && match_ctxs_time_window(tw, req_time) end)
   end
   def match_ctxs_time_window(time_window, req_time) do
     if Regex.match?(~r/[0-6]([,-][0-6])*/, time_window) do
-      true # TODO: implement match_week_day
+      match_week_day(time_window, req_time)
     else
       match_detailed_time(time_window, req_time)
     end
   end
+
+  def match_week_day(time_window, req_time), do: true # TODO
 
   def match_detailed_time(time_window, req_time)
       when not is_list(time_window) and not is_list(req_time) do
@@ -72,6 +81,7 @@ defmodule OneM2MAuthorizator.PDP do
     |> List.zip
     |> match_ranges
   end
+
   def match_ranges([]), do: true
   def match_ranges([{range, value} | tail]) do
     if in_range?(range, value) do
