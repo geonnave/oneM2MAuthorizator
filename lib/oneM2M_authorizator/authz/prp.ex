@@ -8,7 +8,7 @@ defmodule OneM2MAuthorizator.PRP do
     use_self_rules = String.match?(request.to, ~r/authorizator.*/)
 
     acrs = read_acps
-      |> Enum.filter(fn acp -> Enum.member?(request.acp_ids, acp.policy_id) end)
+      #|> Enum.filter(fn acp -> Enum.member?(request.acp_ids, acp.policy_id) end)
       |> Enum.map(fn acp -> if use_self_rules, do: acp.self_rules, else: acp.rules end)
       |> List.flatten
       |> Enum.filter(fn acr -> Enum.member?(acr.origs, request.from) end)
