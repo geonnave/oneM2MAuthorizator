@@ -5,9 +5,6 @@ defmodule PDPTest do
   alias OneM2MAuthorizator.Model.Request
   alias OneM2MAuthorizator.Model.AccessControlRule
 
-  @sample_rule "{\"origs\": [\"root\",\"admin\"],\"ops\": 63}"
-  @array_rule "[{\"origs\": [\"root\",\"admin\"],\"ops\": 63},{\"origs\": [\"c3po\"],\"ops\": 6}]"
-
   @req %Request{acp_ids: ["admin_acp", "port_acp"],
                  to: "smartbulb",
                  from: "c3po",
@@ -77,8 +74,10 @@ defmodule PDPTest do
                  time_window: ["* * 6-22 * * *"]
                }
              ]}
-    time = %{time: "0 0 7 0 0 0"}
-    assert PDP.match_ctxs ctx, time
+    refute PDP.match_ctxs ctx, %{time: "0 0 5 0 0 0"}
+    assert PDP.match_ctxs ctx, %{time: "0 0 7 0 0 0"}
+    assert PDP.match_ctxs ctx, %{time: "0 0 22 0 0 0"}
+    refute PDP.match_ctxs ctx, %{time: "0 0 23 0 0 0"}
   end
 
 end

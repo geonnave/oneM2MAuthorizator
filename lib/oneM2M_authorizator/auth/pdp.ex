@@ -47,11 +47,11 @@ defmodule OneM2MAuthorizator.PDP do
 
   def match_ctxs(%{ctxs: nil}, _req_ctxs), do: true
   def match_ctxs(%{ctxs: []}, _req_ctxs), do: true
-  def match_ctxs(%{ctxs: acr_ctxs}, req_ctxs) do
+  def match_ctxs(%{ctxs: acr_ctxs} = acr, req_ctxs) do
     # TODO: check Ip Address and Location context information
     # match_ctxs_ip_address &&
     # match_ctxs_location &&
-    match_ctxs_time_window(acr_ctxs, req_ctxs)
+    match_ctxs_time_window(acr, req_ctxs)
   end
 
   def match_ctxs_time_window(%{ctxs: acr_ctxs}, req_ctxs) do
@@ -63,14 +63,9 @@ defmodule OneM2MAuthorizator.PDP do
     Enum.reduce(time_windows, true, fn(tw, acc) -> acc && match_ctxs_time_window(tw, req_time) end)
   end
   def match_ctxs_time_window(time_window, req_time) do
-    if Regex.match?(~r/[0-6]([,-][0-6])*/, time_window) do
-      match_week_day(time_window, req_time)
-    else
-      match_detailed_time(time_window, req_time)
-    end
+    # TODO: support also match_week_day
+    match_detailed_time(time_window, req_time)
   end
-
-  def match_week_day(time_window, req_time), do: true # TODO
 
   def match_detailed_time(time_window, req_time)
       when not is_list(time_window) and not is_list(req_time) do

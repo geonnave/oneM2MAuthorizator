@@ -3,9 +3,6 @@ defmodule PRPTest do
 
   alias OneM2MAuthorizator.Model.Request
 
-  @sample_rule "{\"origs\": [\"root\",\"admin\"],\"ops\": 63}"
-  @array_rule "[{\"origs\": [\"root\",\"admin\"],\"ops\": 63},{\"origs\": [\"c3po\"],\"ops\": 6}]"
-
   @req %Request{acp_ids: ["admin_acp", "port_acp"],
                  to: "smartbulb",
                  from: "c3po",
