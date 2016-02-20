@@ -4,7 +4,7 @@ defmodule PIPTest do
   alias OneM2MAuthorizator.Model.Request
   alias OneM2MAuthorizator.PIP
 
-  @req %Request{id: "r01",
+  @req %Request{acp_ids: ["admin_acp", "port_acp"],
                 to: "smartbulb",
                 from: "c3po",
                 op: 4}
