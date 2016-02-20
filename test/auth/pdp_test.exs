@@ -15,12 +15,12 @@ defmodule PDPTest do
                   op: 4}
 
   test "must authorize correct requests" do
-    PDP.authorize @req
+    assert PDP.authorize @req
   end
 
   test "can check originator" do
-    acr = %AccessControlRule{origs: ["c3po"]}
-    assert PDP.match_origs acr, @req
+    assert PDP.match_origs %AccessControlRule{origs: ["c3po"]}, @req
+    refute PDP.match_origs %AccessControlRule{origs: ["no_such_user"]}, @req
   end
 
   test "can check operations" do
